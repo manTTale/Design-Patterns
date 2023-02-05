@@ -6,3 +6,5 @@ class HumanResourcesDepartment implements Observer {
         System.out.println("HR department notified of internship update: " + internship.getName());
     }
 }
+
+//just a test
