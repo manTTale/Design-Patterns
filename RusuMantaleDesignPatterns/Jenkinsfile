@@ -1,26 +1,33 @@
 pipeline {
-
     agent any
 
     stages {
-
-        stage("build") {
+        stage('Checkout Code') {
             steps {
-                echo "building the application..."
+                checkout([$class: 'GitSCM', branches: [[name: '*/master']], doGenerateSubmoduleConfigurations: false, extensions: [], submoduleCfg: [], userRemoteConfigs: [[credentialsId: 'your_credentials_id', url: 'https://github.com/your-repo.git']]])
             }
         }
 
-        stage("test") {
+        stage('Compile Code') {
             steps {
-                echo "testing the application"
+                sh './mvnw clean install -DskipTests'
+            }
+
+            post {
+                success {
+                    echo 'Compilation successful!'
+                }
+                failure {
+                    echo 'Compilation failed!'
+                    error('Compilation errors found. Exiting.')
+                }
             }
         }
 
-        stage("build") {
+        stage('Deploy') {
             steps {
-                echo "deploying the application"
+                sh './mvnw deploy'
             }
         }
-
     }
 }
